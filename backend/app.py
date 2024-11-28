@@ -1,10 +1,13 @@
 # ===== backend/app.py =====
 
-from flask import Flask, jsonify, send_from_directory, request
+from flask import Flask, jsonify, send_from_directory
+from flask_cors import CORS
 import sqlite3
 import os
+from apscheduler.schedulers.background import BackgroundScheduler
 
 app = Flask(__name__, static_folder='../', static_url_path='/')
+CORS(app)  # Enable CORS for all routes
 
 DATABASE = 'products.db'
 IMAGE_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../images')
@@ -16,47 +19,29 @@ def get_db_connection():
 
 @app.route('/api/products', methods=['GET'])
 def get_products():
-    conn = get_db_connection()
-    products = conn.execute('SELECT * FROM products').fetchall()
-    conn.close()
-    product_list = []
-    for product in products:
-        product_dict = {
-            'Category': product['Category'],
-            'Niche Score': product['Niche Score'],
-            'Market Volume (₽)': product['Market Volume (₽)'],
-            'Price Segment (₽)': product['Price Segment (₽)'],
-            'Average Check (₽)': product['Average Check (₽)'],
-            'Items with Sales (%)': product['Items with Sales (%)'],
-            'Growth (%)': product['Growth (%)'],
-            'Units Sold': product['Units Sold'],
-            'Top Product ACP (₽)': product['Top Product ACP (₽)'],
-            'Top Product Units Sold': product['Top Product Units Sold'],
-            'Top Product Price (₽)': product['Top Product Price (₽)'],
-            'Remarks': product['Remarks'],
-            'Article Number': product['Article Number'],
-            'Image': f"/images/{product['Image']}",
-            'is_leader': bool(product['is_leader'])
-        }
-        product_list.append(product_dict)
-    return jsonify(product_list)
+    try:
+        conn = get_db_connection()
+        products = conn.execute('SELECT * FROM products').fetchall()
+        conn.close()
+        product_list = [dict(product) for product in products]
+        # Modify image paths to include '/images/' prefix
+        for product in product_list:
+            product['Image'] = f"/images/{product['Image']}"
+            product['is_leader'] = bool(product['is_leader'])
+        return jsonify(product_list)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/api/predictions', methods=['GET'])
 def get_predictions():
-    conn = get_db_connection()
-    predictions = conn.execute('SELECT * FROM predictions').fetchall()
-    conn.close()
-    prediction_list = []
-    for pred in predictions:
-        pred_dict = {
-            'Product ID': pred['Product ID'],
-            'Product Name': pred['Product Name'],
-            'Predicted Popularity Score': pred['Predicted Popularity Score'],
-            'Predicted Start Sales Window': pred['Predicted Start Sales Window'],
-            'Predicted End Sales Window': pred['Predicted End Sales Window']
-        }
-        prediction_list.append(pred_dict)
-    return jsonify(prediction_list)
+    try:
+        conn = get_db_connection()
+        predictions = conn.execute('SELECT * FROM predictions').fetchall()
+        conn.close()
+        prediction_list = [dict(pred) for pred in predictions]
+        return jsonify(prediction_list)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 # Serve images
 @app.route('/images/<path:filename>')
@@ -72,5 +57,18 @@ def serve_index():
 def serve_marketplace():
     return send_from_directory('../', 'marketplace.html')
 
+def generate_synthetic_data():
+    from create_database import create_database
+    create_database()
+    print("Synthetic data generated and database updated.")
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(func=generate_synthetic_data, trigger='interval', minutes=2)
+    scheduler.start()
+    try:
+        app.run(debug=True, use_reloader=False)
+    except (KeyboardInterrupt, SystemExit):
+        pass
+    finally:
+        scheduler.shutdown()

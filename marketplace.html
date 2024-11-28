@@ -14,7 +14,7 @@
     <header>
         <div class="header-container">
             <div class="logo">
-                <a href="#">MyStore</a>
+                <a href="index.html">MyStore</a>
             </div>
             <nav class="navigation">
                 <ul>
@@ -62,7 +62,7 @@
                     <div class="thumbnails" id="thumbnailsContainer">
                         <!-- Thumbnails will be dynamically inserted here -->
                     </div>
-                    <div class="main-image" id="mainImageContainer" onclick="openModal(currentImageIndex)" aria-label="Увеличение изображения продукта">
+                    <div class="main-image" id="mainImageContainer" onclick="openModal(currentImageIndex)" aria-label="Увеличение изображения">
                         <!-- Background image set via JavaScript for parallax effect -->
                     </div>
                 </div>
@@ -71,14 +71,14 @@
                 <div class="product-short-info" id="productInfo">
                     <h1 class="product-name">Candy Bags for School</h1>
                     <div class="short-info">
-                        <p><strong>Цена:</strong> 299 руб.</p>
-                        <p><strong>Наличие:</strong> В наличии</p>
-                        <p><strong>Вес:</strong> 500 г</p>
-                        <p><strong>Цвет:</strong> Разноцветные</p>
-                        <p><strong>Размеры:</strong> 30x40 см</p>
+                        <p><strong>Цена:</strong> ₽327</p>
+                        <p><strong>Наличие:</strong> 56%</p>
+                        <p><strong>Вес:</strong> 500г</p>
+                        <p><strong>Фвет:</strong> Разноцветные</p>
+                        <p><strong>Размер:</strong> 30x40 см</p>
                     </div>
-                    <a href="javascript:void(0);" class="details-link" onclick="toggleDetails()" aria-label="Подробнее о продукте">
-                        Подробнее <i class="fas fa-chevron-down"></i>
+                    <a href="javascript:void(0);" class="details-link" onclick="toggleDetails()" aria-label="Показать подробности">
+                        Показать подробности <i class="fas fa-chevron-down"></i>
                     </a>
                 </div>
 
@@ -95,13 +95,13 @@
                     <h2>Характеристики и описание</h2>
                     <ul id="productSpecifications">
                         <li><strong>Материал:</strong> Полиэстер</li>
-                        <li><strong>Страна производства:</strong> Россия</li>
-                        <li><strong>Срок годности:</strong> Не применяется</li>
+                        <li><strong>Страна производства:</strong> Китай</li>
+                        <li><strong>Размер:</strong> 30x40 см</li>
                         <!-- Add more specifications as needed -->
                     </ul>
                     <ol id="productDetails">
                         <li>Прочная и долговечная ткань.</li>
-                        <li>Яркий и привлекательный дизайн.</li>
+                        <li>Ирклиевые и привлекательные дизайны.</li>
                         <li>Подходит для ежедневного использования.</li>
                         <!-- Add more detailed descriptions as needed -->
                     </ol>
@@ -162,8 +162,8 @@
             <section class="product-ingredients">
                 <h2>Ингредиенты и состав</h2>
                 <div class="ingredients-content" id="productIngredients">
-                    <p>Наши candy bags изготовлены из высококачественного полиэстера, который обеспечивает долговечность и прочность. Яркие цвета и привлекательный дизайн делают их идеальным выбором для школьных нужд.</p>
-                    <p>Каждая сумка оснащена удобными ручками и вместительным внутренним отделением, что позволяет легко организовать все необходимые вещи. Полиэстер также гарантирует легкость ухода за изделием.</p>
+                    <p>Начи candy bags изготовлены из высококачественного полиэстера, обеспечивающего долговечность и устойчивость к износу. Разноцветные оттенки придают яркость и привлекательность, делая их идеальным выбором для школьников.</p>
+                    <p>Размеры 30x40 см позволяют вместить все необходимые принадлежности, а легкий вес делает их удобными для ежедневного использования.</p>
                     <!-- Add more content as needed -->
                 </div>
             </section>
@@ -174,10 +174,10 @@
     <footer>
         <div class="footer-container">
             <div class="footer-links">
-                <a href="#" class="cart-btn" aria-label="Услуги и поддержка">Услуги и поддержка</a>
-                <a href="#" class="cart-btn" aria-label="Политика конфиденциальности">Политика конфиденциальности</a>
-                <a href="#" class="cart-btn" aria-label="Служба поддержки">Служба поддержки</a>
-                <a href="#" class="cart-btn" aria-label="FAQ">FAQ</a>
+                <a href="#" class="footer-link" aria-label="Услуги и поддержка">Услуги и поддержка</a>
+                <a href="#" class="footer-link" aria-label="Политика конфиденциальности">Политика конфиденциальности</a>
+                <a href="#" class="footer-link" aria-label="Служба поддержки">Служба поддержки</a>
+                <a href="#" class="footer-link" aria-label="FAQ">FAQ</a>
             </div>
             <div class="social-media">
                 <a href="#" title="Facebook" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
@@ -194,7 +194,7 @@
         <span class="close" onclick="closeModal()" aria-label="Закрыть">&times;</span>
         <div class="modal-content">
             <span class="prev" onclick="showPrevImage()" aria-label="Предыдущая">&#10094;</span>
-            <img id="modalImg" src="" alt="Увеличенное изображение продукта" loading="lazy">
+            <img id="modalImg" src="" alt="Увеличенное изображение товара" loading="lazy">
             <span class="next" onclick="showNextImage()" aria-label="Следующая">&#10095;</span>
         </div>
     </div>

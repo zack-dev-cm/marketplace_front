@@ -1,10 +1,11 @@
 // ===== scripts.js =====
 
 // Global variables
-let currentImageIndex = 0;
 let products = [];
-let relatedProducts = [];
 let predictions = [];
+let chart; // Chart instance
+let currentImageIndex = 0;
+let relatedProducts = [];
 let reviewsLoaded = 0;
 const reviewsPerLoad = 3;
 
@@ -15,10 +16,8 @@ async function fetchData() {
             fetch('/api/products'),
             fetch('/api/predictions')
         ]);
-        const productsData = await productsResponse.json();
-        const predictionsData = await predictionsResponse.json();
-        products = productsData;
-        predictions = predictionsData;
+        products = await productsResponse.json();
+        predictions = await predictionsResponse.json();
 
         // Determine the current page
         const path = window.location.pathname;
@@ -53,59 +52,66 @@ function displayPredictionsChart() {
 
     // Prepare data for the chart
     const labels = predictions.map(pred => pred['Product Name']);
-    const popularityScores = predictions.map(pred => pred['Predicted Popularity Score']);
-    const startSales = predictions.map(pred => pred['Predicted Start Sales Window']);
-    const endSales = predictions.map(pred => pred['Predicted End Sales Window']);
+    const data = predictions.map(pred => pred['Predicted Popularity Score']);
 
-    // Create the chart
-    const predictionsChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Прогнозируемый Рейтинг Популярности',
-                data: popularityScores,
-                backgroundColor: 'rgba(106, 13, 173, 0.6)',
-                borderColor: 'rgba(106, 13, 173, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                tooltip: {
-                    callbacks: {
-                        afterBody: function(context) {
-                            const index = context[0].dataIndex;
-                            return `Период продаж: ${startSales[index]} - ${endSales[index]}`;
-                        }
-                    }
-                },
-                legend: {
-                    display: false
-                },
-                title: {
-                    display: true,
-                    text: 'Рейтинг Популярности Лидерских Товаров'
-                }
+    if (chart) {
+        chart.data.labels = labels;
+        chart.data.datasets[0].data = data;
+        chart.update();
+    } else {
+        chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Популярность товаров',
+                    data: data,
+                    backgroundColor: 'rgba(106, 13, 173, 0.2)',
+                    borderColor: 'rgba(106, 13, 173, 1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4
+                }]
             },
-            scales: {
-                y: {
-                    beginAtZero: true,
+            options: {
+                responsive: true,
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            afterBody: function(context) {
+                                const index = context[0].dataIndex;
+                                const start = predictions[index]['Predicted Start Sales Window'];
+                                const end = predictions[index]['Predicted End Sales Window'];
+                                return `Продажи с: ${start} по: ${end}`;
+                            }
+                        }
+                    },
+                    legend: {
+                        display: false
+                    },
                     title: {
                         display: true,
-                        text: 'Рейтинг Популярности'
+                        text: 'Продажи популярных товаров по категориям'
                     }
                 },
-                x: {
-                    title: {
-                        display: true,
-                        text: 'Товары'
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Популярность (баллы)'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Категории'
+                        }
                     }
                 }
             }
-        }
-    });
+        });
+    }
 }
 
 // --------------------------
@@ -158,7 +164,7 @@ function displayThumbnails() {
     products.forEach((prod, index) => {
         const thumb = document.createElement('img');
         thumb.src = prod.Image;
-        thumb.alt = `Изображение продукта ${index + 1}`;
+        thumb.alt = `Изображение товара ${index + 1}`;
         thumb.setAttribute('data-index', index);
         thumb.loading = 'lazy';
         thumb.addEventListener('mouseover', () => {
@@ -178,6 +184,12 @@ function changeImage(index) {
     const mainImageContainer = document.getElementById('mainImageContainer');
     if (!mainImageContainer) return; // Exit if element doesn't exist
     mainImageContainer.style.backgroundImage = `url(${products[index].Image})`;
+
+    // Highlight active thumbnail
+    const thumbnails = document.querySelectorAll('#thumbnailsContainer img');
+    thumbnails.forEach(thumb => thumb.classList.remove('active'));
+    const activeThumb = thumbnails[index];
+    if (activeThumb) activeThumb.classList.add('active');
 }
 
 // Display Detailed Product Information
@@ -190,11 +202,11 @@ function displayProduct(product) {
         <div class="short-info">
             <p><strong>Цена:</strong> ₽${product['Average Check (₽)']}</p>
             <p><strong>Наличие:</strong> ${product['Items with Sales (%)']}%</p>
-            <p><strong>Вес:</strong> ${product['Top Product Units Sold'] || 'N/A'}</p>
-            <p><strong>Цвет:</strong> ${product['Remarks']}</p>
-            <p><strong>Размеры:</strong> ${product['Top Product Price (₽)'] || 'N/A'}</p>
+            <p><strong>Вес:</strong> ${product['Units Sold']}г</p>
+            <p><strong>Фвет:</strong> ${product.Specs.Color}</p>
+            <p><strong>Размер:</strong> ${product.Specs.Dimensions}</p>
         </div>
-        <a href="javascript:void(0);" class="details-link" onclick="toggleDetails()">Подробнее о продукте <i class="fas fa-chevron-down"></i></a>
+        <a href="javascript:void(0);" class="details-link" onclick="toggleDetails()">Показать подробности <i class="fas fa-chevron-down"></i></a>
     `;
 }
 
@@ -235,8 +247,15 @@ function displayRelatedProducts(currentProduct) {
 
 // Generate Star Ratings Based on Growth Percentage
 function generateStars(growth) {
-    const starCount = growth ? Math.min(Math.round(growth / 10), 5) : 3;
-    return '★'.repeat(starCount) + '☆'.repeat(5 - starCount);
+    const starCount = growth ? Math.min(Math.round(growth / 60), 5) : 3; // Adjust divisor as needed
+    let stars = '';
+    for (let i = 0; i < starCount; i++) {
+        stars += '★';
+    }
+    for (let i = starCount; i < 5; i++) {
+        stars += '☆';
+    }
+    return stars;
 }
 
 // Display Ingredients and Composition
@@ -245,9 +264,9 @@ function displayIngredients(product) {
     if (!productIngredients) return; // Exit if container doesn't exist
 
     productIngredients.innerHTML = `
-        <p><strong>Ингредиенты:</strong> Полиэстер</p>
-        <p><strong>Состав:</strong> Высококачественный материал</p>
-        <p><strong>Размеры:</strong> 30x40 см</p>
+        <p><strong>Ингредиенты:</strong> ${product.Specs.Material}</p>
+        <p><strong>Состав:</strong> ${product.Specs.Color}, ${product.Specs.Weight}, ${product.Specs.Dimensions}</p>
+        <p><strong>Производство:</strong> ${product.Specs['Country of Origin']}</p>
     `;
 }
 
@@ -255,11 +274,11 @@ function displayIngredients(product) {
 function toggleFavorite(button) {
     button.classList.toggle('favorited');
     if (button.classList.contains('favorited')) {
-        button.innerHTML = '<i class="fas fa-heart"></i> В избранном';
+        button.innerHTML = '<i class="fas fa-heart"></i> В избранное';
         alert('Товар добавлен в избранное!');
     } else {
-        button.innerHTML = '<i class="fas fa-heart"></i> В избранном';
-        alert('Товар удален из избранного!');
+        button.innerHTML = '<i class="fas fa-heart"></i> В избранное';
+        alert('Товар удалён из избранного!');
     }
 }
 
@@ -371,35 +390,35 @@ let reviews = [
         name: 'Иван Иванов',
         date: '2024-04-12',
         rating: 5,
-        content: 'Отличный продукт! Высокое качество и удобство использования.',
+        content: 'Отличный продукт! Очень рекомендую.',
         media: []
     },
     {
-        name: 'Мария Петрова',
+        name: 'Мария Петрина',
         date: '2024-03-28',
         rating: 4,
-        content: 'Хорошее качество, но доставка заняла немного больше времени.',
+        content: 'Хорошее качество, но немного дорого.',
         media: ['images/img2.jpg']
     },
     {
         name: 'Анна Смирнова',
         date: '2024-02-15',
         rating: 5,
-        content: 'Превосходный выбор! Рекомендую всем.',
+        content: 'Превосходные характеристики и описание!',
         media: ['images/img3.jpg']
     },
     {
         name: 'Сергей Кузнецов',
         date: '2024-01-10',
         rating: 3,
-        content: 'Нормально, но есть некоторые недостатки.',
+        content: 'Нормально, но могло быть лучше.',
         media: []
     },
     {
         name: 'Елена Васильева',
         date: '2023-12-05',
         rating: 4,
-        content: 'Хороший продукт, соответствующий описанию.',
+        content: 'Хороший товар, быстро доставили.',
         media: []
     },
     // Add more mock reviews as needed
@@ -540,6 +559,11 @@ function handleReviewSubmission() {
     });
 }
 
+// Load More Reviews
+function loadMoreReviews() {
+    loadReviews();
+}
+
 // --------------------------
 // Language Selector Functionality
 // --------------------------
@@ -558,7 +582,7 @@ function handleLanguageSelection() {
 // --------------------------
 
 function notifyDemo() {
-    alert('Эта функция пока недоступна.');
+    alert('Эта функция пока не реализована.');
 }
 
 function handleDemoButtons() {

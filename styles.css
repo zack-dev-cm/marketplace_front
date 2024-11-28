@@ -319,11 +319,6 @@ header {
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
-.product-gallery .main-image:hover {
-    transform: scale(1.02);
-    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-}
-
 /* Short Information */
 .product-short-info {
     flex: 1 1 35%;
@@ -631,7 +626,7 @@ header {
 .review-media img:hover,
 .review-media video:hover {
     transform: scale(1.1);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 8px rgba(106, 13, 173, 0.3);
 }
 
 /* ===========================
@@ -1265,4 +1260,22 @@ img {
         width: 18px;
         height: 18px;
     }
+}
+
+/* Additional Styles for Leader Products and Badges */
+.leader-product {
+    border: 2px solid #FFD700;
+}
+
+.leader-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: #FFD700;
+    color: #000;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 0.9em;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
