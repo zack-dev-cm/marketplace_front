@@ -31,10 +31,10 @@ function displayProduct(product) {
         <div class="short-info">
             <p><strong>Артикул:</strong> ${product['Article Number']}</p>
             <p><strong>Степень пилотажа:</strong> ${product['Niche Score']}</p>
-            <p><strong>Количесто продуктов в упаковке:</strong> ${product['Units Sold'] || 'N/A'}</p>
+            <p><strong>Количество продуктов в упаковке:</strong> ${product['Units Sold'] || 'N/A'}</p>
             <p><strong>Питание:</strong> ${product['Price Segment (₽)']}</p>
             <p><strong>Тип питания:</strong> ${product['Remarks']}</p>
-            <p><strong>Количесто лампы:</strong> ${product['Top Product Units Sold'] || 'N/A'}</p>
+            <p><strong>Количество лампы:</strong> ${product['Top Product Units Sold'] || 'N/A'}</p>
             <p><strong>Тип лампы:</strong> ${product['Growth (%)'] || 'N/A'}</p>
         </div>
         <a href="javascript:void(0);" class="details-link" onclick="toggleDetails()">Всё характеристики и описание <i class="fas fa-chevron-down"></i></a>
@@ -79,7 +79,7 @@ function displayRelatedProducts(currentProduct) {
     const relatedProductsContainer = document.getElementById('relatedProductsContainer');
     relatedProductsContainer.innerHTML = ''; // Clear existing
 
-    // Select related products - here, simply other products in the same category or random
+    // Select related products - here, simply other products in different categories or random
     relatedProducts = products.filter(prod => prod.Category !== currentProduct.Category).slice(0, 4); // Take first 4 different products
 
     relatedProducts.forEach(prod => {
@@ -414,20 +414,3 @@ demoButtons.forEach(button => {
         notifyDemo();
     });
 });
-
-// Image Pan (Parallax) Effect Initialization
-function initializeParallax() {
-    const mainImageContainer = document.getElementById('mainImageContainer');
-    mainImageContainer.addEventListener('mousemove', (e) => {
-        const rect = mainImageContainer.getBoundingClientRect();
-        const xPercent = ((e.clientX - rect.left) / rect.width) * 100;
-        const yPercent = ((e.clientY - rect.top) / rect.height) * 100;
-
-        // Adjust background position based on cursor position
-        mainImageContainer.style.backgroundPosition = `${xPercent}% ${yPercent}%`;
-    });
-
-    mainImageContainer.addEventListener('mouseleave', () => {
-        mainImageContainer.style.backgroundPosition = 'center center';
-    });
-}
