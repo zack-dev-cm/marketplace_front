@@ -3,3 +3,4 @@ images/
 prodacts.db
 */.*
 backend/.*
+backend/__pycache__
