@@ -306,7 +306,7 @@ header {
 .product-gallery .main-image {
     flex-grow: 1;
     height: 700px;
-    width: 200%;
+    width: 150%;
     overflow: hidden;
     position: relative;
     background-size: cover;

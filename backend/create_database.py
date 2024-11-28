@@ -1,4 +1,4 @@
-# ===== create_database.py =====
+# ===== backend/create_database.py =====
 
 import pandas as pd
 import sqlite3
@@ -76,7 +76,6 @@ data = {
 df = pd.DataFrame(data)
 
 # Add image paths (assuming images are named as img1.jpg to img15.jpg)
-# For simplicity, we'll assign images sequentially; in real scenarios, you'd map appropriately
 image_mapping = {
     'Candy Bags for School': 'img1.jpg',
     'Midi Sequin Skirts': 'img2.jpg',
@@ -100,9 +99,79 @@ df['Image'] = df['Category'].map(image_mapping)
 # Handle missing values by filling with default images or None
 df['Image'] = df['Image'].fillna('default.jpg')
 
-# Save DataFrame to SQLite
+# Add 'is_leader' field, default to False
+df['is_leader'] = False
+
+# Create Predictions DataFrame
+predictions_data = {
+    'Product ID': [11, 6, 4, 10, 12],  # Assuming Product IDs match the 'Article Number'
+    'Product Name': [
+        'Wireless Earbuds',
+        'Smart Watches',
+        'Running Shoes',
+        'Eco-friendly Water Bottles',
+        'Yoga Mats'
+    ],
+    'Predicted Popularity Score': [95, 90, 85, 80, 75],
+    'Predicted Start Sales Window': ['2024-12-01', '2024-11-15', '2024-12-05', '2024-11-20', '2024-12-10'],
+    'Predicted End Sales Window': ['2024-12-31', '2024-12-15', '2025-01-05', '2024-12-20', '2025-01-10']
+}
+
+df_predictions = pd.DataFrame(predictions_data)
+
+# Connect to SQLite and create tables
 conn = sqlite3.connect('products.db')
+cursor = conn.cursor()
+
+# Create 'products' table with 'is_leader' field
+cursor.execute('''
+    CREATE TABLE IF NOT EXISTS products (
+        Category TEXT,
+        "Niche Score" INTEGER,
+        "Market Volume (₽)" INTEGER,
+        "Price Segment (₽)" TEXT,
+        "Average Check (₽)" INTEGER,
+        "Items with Sales (%)" INTEGER,
+        "Growth (%)" REAL,
+        "Units Sold" REAL,
+        "Top Product ACP (₽)" REAL,
+        "Top Product Units Sold" REAL,
+        "Top Product Price (₽)" REAL,
+        Remarks TEXT,
+        "Article Number" INTEGER PRIMARY KEY,
+        Image TEXT,
+        is_leader BOOLEAN
+    )
+''')
+
+# Insert data into 'products' table
 df.to_sql('products', conn, if_exists='replace', index=False)
+
+# Update 'is_leader' for predicted products
+for _, row in df_predictions.iterrows():
+    cursor.execute('''
+        UPDATE products
+        SET is_leader = 1
+        WHERE "Article Number" = ?
+    ''', (row['Product ID'],))
+
+# Create 'predictions' table
+cursor.execute('''
+    CREATE TABLE IF NOT EXISTS predictions (
+        "Product ID" INTEGER,
+        "Product Name" TEXT,
+        "Predicted Popularity Score" INTEGER,
+        "Predicted Start Sales Window" TEXT,
+        "Predicted End Sales Window" TEXT,
+        FOREIGN KEY("Product ID") REFERENCES products("Article Number")
+    )
+''')
+
+# Insert data into 'predictions' table
+df_predictions.to_sql('predictions', conn, if_exists='replace', index=False)
+
+# Commit and close
+conn.commit()
 conn.close()
 
 print("SQLite database 'products.db' created and populated successfully.")

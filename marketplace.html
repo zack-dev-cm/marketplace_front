@@ -1,0 +1,205 @@
+<!-- ===== marketplace.html ===== -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyStore - Каталог товаров</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTTXJNn6+4ZT0nS4wFIUBPqWbQF/oJQrCrvP7RmNzKxO6NLe9d9pKm7wRdyTfYxA/EzJr7Jifw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+    <!-- Header Section -->
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <a href="#">MyStore</a>
+            </div>
+            <nav class="navigation">
+                <ul>
+                    <li><a href="index.html">Главная</a></li>
+                    <li><a href="#">Контакты</a></li>
+                </ul>
+            </nav>
+            <div class="header-right">
+                <div class="search-bar">
+                    <input type="text" placeholder="Поиск товаров..." aria-label="Поиск товаров">
+                    <button aria-label="Поиск"><i class="fas fa-search"></i></button>
+                </div>
+                <div class="header-icons">
+                    <a href="#" title="Профиль" aria-label="Профиль"><i class="fas fa-user"></i></a>
+                    <a href="#" title="Избранное" class="favorite-btn" onclick="toggleFavorite(this)" aria-label="Избранное"><i class="fas fa-heart"></i></a>
+                    <a href="#" title="Корзина" class="cart-btn" aria-label="Корзина"><i class="fas fa-shopping-cart"></i></a>
+                </div>
+                <div class="language-selector">
+                    <select aria-label="Выбор языка">
+                        <option value="ru">РУС</option>
+                        <option value="en">ENG</option>
+                        <!-- Add more languages as needed -->
+                    </select>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Promotional Banner -->
+    <section class="promo-banner">
+        <div class="container">
+            <h2>Скидки до 50%</h2>
+            <p>Успейте купить!</p>
+            <a href="#" class="promo-link cart-btn" aria-label="Перейти к акциям">Перейти к акциям</a>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main>
+        <div class="container">
+            <!-- Product Display Section -->
+            <section class="product-display">
+                <!-- Product Gallery (Left) -->
+                <div class="product-gallery">
+                    <div class="thumbnails" id="thumbnailsContainer">
+                        <!-- Thumbnails will be dynamically inserted here -->
+                    </div>
+                    <div class="main-image" id="mainImageContainer" onclick="openModal(currentImageIndex)" aria-label="Увеличение изображения продукта">
+                        <!-- Background image set via JavaScript for parallax effect -->
+                    </div>
+                </div>
+
+                <!-- Short Information (Middle) -->
+                <div class="product-short-info" id="productInfo">
+                    <h1 class="product-name">Candy Bags for School</h1>
+                    <div class="short-info">
+                        <p><strong>Цена:</strong> 299 руб.</p>
+                        <p><strong>Наличие:</strong> В наличии</p>
+                        <p><strong>Вес:</strong> 500 г</p>
+                        <p><strong>Цвет:</strong> Разноцветные</p>
+                        <p><strong>Размеры:</strong> 30x40 см</p>
+                    </div>
+                    <a href="javascript:void(0);" class="details-link" onclick="toggleDetails()" aria-label="Подробнее о продукте">
+                        Подробнее <i class="fas fa-chevron-down"></i>
+                    </a>
+                </div>
+
+                <!-- Add to Cart Button (Right) -->
+                <div class="add-to-cart-section">
+                    <button class="add-to-cart cart-btn" aria-label="Добавить в корзину">Добавить в корзину</button>
+                </div>
+            </section>
+
+            <!-- Detailed Description Overlay -->
+            <div id="detailsOverlay" class="overlay" aria-hidden="true">
+                <div class="overlay-content">
+                    <span class="close-btn" onclick="toggleDetails()" aria-label="Закрыть">&times;</span>
+                    <h2>Характеристики и описание</h2>
+                    <ul id="productSpecifications">
+                        <li><strong>Материал:</strong> Полиэстер</li>
+                        <li><strong>Страна производства:</strong> Россия</li>
+                        <li><strong>Срок годности:</strong> Не применяется</li>
+                        <!-- Add more specifications as needed -->
+                    </ul>
+                    <ol id="productDetails">
+                        <li>Прочная и долговечная ткань.</li>
+                        <li>Яркий и привлекательный дизайн.</li>
+                        <li>Подходит для ежедневного использования.</li>
+                        <!-- Add more detailed descriptions as needed -->
+                    </ol>
+                </div>
+            </div>
+
+            <!-- User Reviews Section -->
+            <section class="user-reviews">
+                <h2>Отзывы покупателей</h2>
+                <div class="reviews-header">
+                    <div class="overall-rating">
+                        <span class="stars" aria-label="Отличный рейтинг">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+                        <span class="avg-rating">4.8</span>
+                        <span class="rating-text">из 5</span>
+                        <span class="rating-count">(128 отзывов)</span>
+                    </div>
+                    <button class="load-more-btn cart-btn" onclick="loadMoreReviews()" aria-label="Загрузить больше отзывов">Загрузить больше отзывов</button>
+                </div>
+                <div id="reviewsContainer">
+                    <!-- Reviews will be dynamically loaded here -->
+                </div>
+                <div class="review-form">
+                    <h3>Оставить отзыв</h3>
+                    <form id="reviewForm">
+                        <label for="reviewerName">Имя:</label>
+                        <input type="text" id="reviewerName" name="reviewerName" required aria-required="true">
+
+                        <label for="reviewRating">Рейтинг:</label>
+                        <select id="reviewRating" name="reviewRating" required aria-required="true">
+                            <option value="">Выберите рейтинг</option>
+                            <option value="5">&#9733;&#9733;&#9733;&#9733;&#9733;</option>
+                            <option value="4">&#9733;&#9733;&#9733;&#9733;&#9734;</option>
+                            <option value="3">&#9733;&#9733;&#9733;&#9734;&#9734;</option>
+                            <option value="2">&#9733;&#9733;&#9734;&#9734;&#9734;</option>
+                            <option value="1">&#9733;&#9734;&#9734;&#9734;&#9734;</option>
+                        </select>
+
+                        <label for="reviewContent">Отзыв:</label>
+                        <textarea id="reviewContent" name="reviewContent" rows="4" required aria-required="true"></textarea>
+
+                        <label for="reviewMedia">Загрузить фото/видео:</label>
+                        <input type="file" id="reviewMedia" name="reviewMedia" accept="image/*,video/*" multiple>
+
+                        <button type="submit" class="cart-btn" aria-label="Отправить отзыв">Отправить отзыв</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Recommendations and Related Products Section -->
+            <section class="related-products">
+                <h2>Сопутствующие товары</h2>
+                <div class="products-grid" id="relatedProductsContainer">
+                    <!-- Related products will be dynamically inserted here -->
+                </div>
+            </section>
+
+            <!-- Ingredients and Composition Section -->
+            <section class="product-ingredients">
+                <h2>Ингредиенты и состав</h2>
+                <div class="ingredients-content" id="productIngredients">
+                    <p>Наши candy bags изготовлены из высококачественного полиэстера, который обеспечивает долговечность и прочность. Яркие цвета и привлекательный дизайн делают их идеальным выбором для школьных нужд.</p>
+                    <p>Каждая сумка оснащена удобными ручками и вместительным внутренним отделением, что позволяет легко организовать все необходимые вещи. Полиэстер также гарантирует легкость ухода за изделием.</p>
+                    <!-- Add more content as needed -->
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer Section -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-links">
+                <a href="#" class="cart-btn" aria-label="Услуги и поддержка">Услуги и поддержка</a>
+                <a href="#" class="cart-btn" aria-label="Политика конфиденциальности">Политика конфиденциальности</a>
+                <a href="#" class="cart-btn" aria-label="Служба поддержки">Служба поддержки</a>
+                <a href="#" class="cart-btn" aria-label="FAQ">FAQ</a>
+            </div>
+            <div class="social-media">
+                <a href="#" title="Facebook" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" title="Instagram" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="#" title="VK" aria-label="VK"><i class="fab fa-vk"></i></a>
+                <a href="#" title="YouTube" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+            </div>
+            <p>&copy; 2024 MyStore. Все права защищены.</p>
+        </div>
+    </footer>
+
+    <!-- Image Modal -->
+    <div id="imageModal" class="modal" aria-hidden="true">
+        <span class="close" onclick="closeModal()" aria-label="Закрыть">&times;</span>
+        <div class="modal-content">
+            <span class="prev" onclick="showPrevImage()" aria-label="Предыдущая">&#10094;</span>
+            <img id="modalImg" src="" alt="Увеличенное изображение продукта" loading="lazy">
+            <span class="next" onclick="showNextImage()" aria-label="Следующая">&#10095;</span>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="scripts.js"></script>
+</body>
+</html>

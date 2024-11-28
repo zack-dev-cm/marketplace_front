@@ -35,10 +35,28 @@ def get_products():
             'Top Product Price (₽)': product['Top Product Price (₽)'],
             'Remarks': product['Remarks'],
             'Article Number': product['Article Number'],
-            'Image': f"/images/{product['Image']}"
+            'Image': f"/images/{product['Image']}",
+            'is_leader': bool(product['is_leader'])
         }
         product_list.append(product_dict)
     return jsonify(product_list)
+
+@app.route('/api/predictions', methods=['GET'])
+def get_predictions():
+    conn = get_db_connection()
+    predictions = conn.execute('SELECT * FROM predictions').fetchall()
+    conn.close()
+    prediction_list = []
+    for pred in predictions:
+        pred_dict = {
+            'Product ID': pred['Product ID'],
+            'Product Name': pred['Product Name'],
+            'Predicted Popularity Score': pred['Predicted Popularity Score'],
+            'Predicted Start Sales Window': pred['Predicted Start Sales Window'],
+            'Predicted End Sales Window': pred['Predicted End Sales Window']
+        }
+        prediction_list.append(pred_dict)
+    return jsonify(prediction_list)
 
 # Serve images
 @app.route('/images/<path:filename>')
@@ -49,6 +67,10 @@ def serve_image(filename):
 @app.route('/')
 def serve_index():
     return send_from_directory('../', 'index.html')
+
+@app.route('/marketplace.html')
+def serve_marketplace():
+    return send_from_directory('../', 'marketplace.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
