@@ -12,7 +12,20 @@ import json
 
 # Initialize OpenAI client
 GPT_MODEL = os.getenv("GPT_MODEL")
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+client = None
+USE_GPT = False
+
+if USE_GPT:
+    try:
+        client = OpenAI(api_key=OPENAI_API_KEY)
+        print("GPT is enabled. Product descriptions will be generated using GPT.")
+    except Exception as e:
+        print(f"Failed to initialize GPT: {e}")
+        print("Descriptions will be populated with random text.")
+        client = None
+else:
+    print("GPT_MODEL or OPENAI_API_KEY not set. Descriptions will be populated with random text.")
 
 def generate_random_image(image_path):
     # Generate a random image and save it
@@ -20,19 +33,32 @@ def generate_random_image(image_path):
     cv2.imwrite(image_path, img)
 
 def generate_product_description(category):
-    prompt = f"Write a detailed up to 100 words, engaging product description for a {category}."
-    messages = [
-        {'role': 'system', 'content': 'You are a copywriter working for an e-commerce company.'},
-        {'role': 'user', 'content': prompt},
-    ]
+    if client:
+        prompt = f"Write a detailed up to 100 words, engaging product description for a {category}."
+        messages = [
+            {'role': 'system', 'content': 'You are a copywriter working for an e-commerce company.'},
+            {'role': 'user', 'content': prompt},
+        ]
+        try:
+            completion = client.chat.completions.create(
+                model=GPT_MODEL,
+                messages=messages
+            )
+            return completion.choices[0].message.content.strip()
+        except Exception as e:
+            print(f"GPT failed to generate description for {category}: {e}")
+            return generate_random_description(category)
+    else:
+        return generate_random_description(category)
 
-    completion = client.chat.completions.create(
-        model=GPT_MODEL,
-        messages=messages
-    )
-
-    return completion.choices[0].message.content
-
+def generate_random_description(category):
+    # Generate a random placeholder description
+    adjectives = ['Amazing', 'Innovative', 'Durable', 'Stylish', 'Compact', 'Eco-friendly', 'Premium', 'Affordable']
+    features = ['high-quality materials', 'cutting-edge technology', 'user-friendly design', 'long-lasting performance', 'sleek appearance']
+    benefits = ['enhances your daily life', 'provides exceptional comfort', 'offers unparalleled convenience', 'ensures maximum efficiency', 'delivers outstanding results']
+    
+    description = f"{random.choice(adjectives)} {category} with {random.choice(features)}, {random.choice(features)} that {random.choice(benefits)}."
+    return description
 
 def generate_random_specs():
     # Generate random specifications
