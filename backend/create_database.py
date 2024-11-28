@@ -4,28 +4,10 @@ import sqlite3
 import os
 import cv2
 import numpy as np
-from openai import OpenAI
 import random
 import string
 from datetime import datetime, timedelta
 import json 
-
-# Initialize OpenAI client
-GPT_MODEL = os.getenv("GPT_MODEL")
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-client = None
-USE_GPT = False
-
-if USE_GPT:
-    try:
-        client = OpenAI(api_key=OPENAI_API_KEY)
-        print("GPT is enabled. Product descriptions will be generated using GPT.")
-    except Exception as e:
-        print(f"Failed to initialize GPT: {e}")
-        print("Descriptions will be populated with random text.")
-        client = None
-else:
-    print("GPT_MODEL or OPENAI_API_KEY not set. Descriptions will be populated with random text.")
 
 def generate_random_image(image_path):
     # Generate a random image and save it
@@ -33,25 +15,6 @@ def generate_random_image(image_path):
     cv2.imwrite(image_path, img)
 
 def generate_product_description(category):
-    if client:
-        prompt = f"Write a detailed up to 100 words, engaging product description for a {category}."
-        messages = [
-            {'role': 'system', 'content': 'You are a copywriter working for an e-commerce company.'},
-            {'role': 'user', 'content': prompt},
-        ]
-        try:
-            completion = client.chat.completions.create(
-                model=GPT_MODEL,
-                messages=messages
-            )
-            return completion.choices[0].message.content.strip()
-        except Exception as e:
-            print(f"GPT failed to generate description for {category}: {e}")
-            return generate_random_description(category)
-    else:
-        return generate_random_description(category)
-
-def generate_random_description(category):
     # Generate a random placeholder description
     adjectives = ['Amazing', 'Innovative', 'Durable', 'Stylish', 'Compact', 'Eco-friendly', 'Premium', 'Affordable']
     features = ['high-quality materials', 'cutting-edge technology', 'user-friendly design', 'long-lasting performance', 'sleek appearance']
@@ -90,7 +53,8 @@ def generate_feedbacks():
                 'Exceeded my expectations!',
                 'Would not purchase again.',
                 'Five stars!'
-            ])
+            ]),
+            'media': []  # Empty list for now; can be populated with image/video filenames if needed
         }
         feedbacks.append(feedback)
     return feedbacks
@@ -155,15 +119,20 @@ def create_database():
     images_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../images')
     os.makedirs(images_folder, exist_ok=True)
     image_paths = []
+    images_list = []
     descriptions = []
     specs_list = []
     feedbacks_list = []
 
     for category in df['Category']:
-        image_filename = f"{category.replace(' ', '_')}.jpg"
-        image_path = os.path.join(images_folder, image_filename)
-        generate_random_image(image_path)
-        image_paths.append(image_filename)
+        image_filenames = []
+        for i in range(3):  # Generate 3 images per product
+            image_filename = f"{category.replace(' ', '_')}_{i}.jpg"
+            image_path = os.path.join(images_folder, image_filename)
+            generate_random_image(image_path)
+            image_filenames.append(image_filename)
+        images_list.append(image_filenames)
+        image_paths.append(image_filenames[0])  # Use the first image as the main image
 
         description = generate_product_description(category)
         descriptions.append(description)
@@ -175,14 +144,16 @@ def create_database():
         feedbacks_list.append(feedbacks)
 
     df['Image'] = image_paths
+    df['Images'] = images_list  # List of images
     df['Description'] = descriptions
     df['Specs'] = specs_list
     df['Feedbacks'] = feedbacks_list
     df['is_leader'] = [False] * len(df)
 
-    # Serialize 'Specs' and 'Feedbacks' to JSON strings
+    # Serialize 'Specs', 'Feedbacks', 'Images' to JSON strings
     df['Specs'] = df['Specs'].apply(json.dumps)
     df['Feedbacks'] = df['Feedbacks'].apply(json.dumps)
+    df['Images'] = df['Images'].apply(json.dumps)
 
     # Generate predictions
     predictions_count = 5

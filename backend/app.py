@@ -4,6 +4,7 @@ from flask import Flask, jsonify, send_from_directory
 from flask_cors import CORS
 import sqlite3
 import os
+import json  # Added import for json module
 from apscheduler.schedulers.background import BackgroundScheduler
 
 app = Flask(__name__, static_folder='../', static_url_path='/')
@@ -24,10 +25,19 @@ def get_products():
         products = conn.execute('SELECT * FROM products').fetchall()
         conn.close()
         product_list = [dict(product) for product in products]
-        # Modify image paths to include '/images/' prefix
+        # Modify image paths to include '/images/' prefix and deserialize JSON fields
         for product in product_list:
             product['Image'] = f"/images/{product['Image']}"
             product['is_leader'] = bool(product['is_leader'])
+            # Deserialize JSON fields
+            if 'Specs' in product:
+                product['Specs'] = json.loads(product['Specs'])
+            if 'Feedbacks' in product:
+                product['Feedbacks'] = json.loads(product['Feedbacks'])
+            if 'Images' in product:
+                product['Images'] = json.loads(product['Images'])
+                # Modify image paths in Images
+                product['Images'] = [f"/images/{img}" for img in product['Images']]
         return jsonify(product_list)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -40,6 +50,31 @@ def get_predictions():
         conn.close()
         prediction_list = [dict(pred) for pred in predictions]
         return jsonify(prediction_list)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# New endpoint to fetch best products
+@app.route('/api/best-products', methods=['GET'])
+def get_best_products():
+    try:
+        conn = get_db_connection()
+        best_products = conn.execute('SELECT * FROM products WHERE is_leader = 1').fetchall()
+        conn.close()
+        best_product_list = [dict(product) for product in best_products]
+        # Modify image paths and deserialize JSON fields
+        for product in best_product_list:
+            product['Image'] = f"/images/{product['Image']}"
+            product['is_leader'] = bool(product['is_leader'])
+            # Deserialize JSON fields
+            if 'Specs' in product:
+                product['Specs'] = json.loads(product['Specs'])
+            if 'Feedbacks' in product:
+                product['Feedbacks'] = json.loads(product['Feedbacks'])
+            if 'Images' in product:
+                product['Images'] = json.loads(product['Images'])
+                # Modify image paths in Images
+                product['Images'] = [f"/images/{img}" for img in product['Images']]
+        return jsonify(best_product_list)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
