@@ -1,58 +1,129 @@
-// Image Sources Array
-const imageSources = [
-    'images/img1.jpg',
-    'images/img2.jpg',
-    'images/img3.jpg',
-    'images/img4.jpg',
-    'images/img5.jpg',
-    'images/img6.jpg',
-    'images/img7.jpg',
-    'images/img8.jpg',
-    'images/img9.jpg',
-    'images/img10.jpg'
-];
+// ===== scripts.js =====
 
-// Set initial image index
+// Global variables
 let currentImageIndex = 0;
+let products = [];
+let relatedProducts = [];
 
-// Function to change main image on thumbnail hover
-function changeImage(index) {
-    currentImageIndex = index;
-    const mainImage = document.getElementById('currentImage');
-    mainImage.src = imageSources[index];
+// Fetch products from the backend
+async function fetchProducts() {
+    try {
+        const response = await fetch('/api/products');
+        const data = await response.json();
+        products = data;
+        if (products.length > 0) {
+            displayProduct(products[0]);
+            displayThumbnails();
+            displayRelatedProducts(products[0]);
+            displayIngredients(products[0]);
+            initializeParallax();
+        }
+    } catch (error) {
+        console.error('Error fetching products:', error);
+    }
 }
 
-// Add event listeners to thumbnails
-const thumbnails = document.querySelectorAll('.thumbnails img');
-thumbnails.forEach((thumb, index) => {
-    thumb.addEventListener('mouseover', () => {
-        changeImage(index);
+// Display main product information
+function displayProduct(product) {
+    const productInfo = document.getElementById('productInfo');
+    productInfo.innerHTML = `
+        <h1 class="product-name">${product.Category}</h1>
+        <div class="short-info">
+            <p><strong>Артикул:</strong> ${product['Article Number']}</p>
+            <p><strong>Степень пилотажа:</strong> ${product['Niche Score']}</p>
+            <p><strong>Количесто продуктов в упаковке:</strong> ${product['Units Sold'] || 'N/A'}</p>
+            <p><strong>Питание:</strong> ${product['Price Segment (₽)']}</p>
+            <p><strong>Тип питания:</strong> ${product['Remarks']}</p>
+            <p><strong>Количесто лампы:</strong> ${product['Top Product Units Sold'] || 'N/A'}</p>
+            <p><strong>Тип лампы:</strong> ${product['Growth (%)'] || 'N/A'}</p>
+        </div>
+        <a href="javascript:void(0);" class="details-link" onclick="toggleDetails()">Всё характеристики и описание <i class="fas fa-chevron-down"></i></a>
+    `;
+
+    // Set the main image background
+    const mainImageContainer = document.getElementById('mainImageContainer');
+    mainImageContainer.style.backgroundImage = `url(${product.Image})`;
+}
+
+// Display thumbnails
+function displayThumbnails() {
+    const thumbnailsContainer = document.getElementById('thumbnailsContainer');
+    thumbnailsContainer.innerHTML = ''; // Clear existing thumbnails
+
+    products.forEach((prod, index) => {
+        const thumb = document.createElement('img');
+        thumb.src = prod.Image;
+        thumb.alt = `Изображение ${index + 1}`;
+        thumb.setAttribute('data-index', index);
+        thumb.loading = 'lazy';
+        thumb.addEventListener('mouseover', () => {
+            currentImageIndex = index;
+            changeImage(index);
+        });
+        thumb.addEventListener('click', () => {
+            openModal(index);
+        });
+        thumbnailsContainer.appendChild(thumb);
     });
-    thumb.addEventListener('click', () => {
-        openModal(index);
+}
+
+// Change main image on thumbnail hover
+function changeImage(index) {
+    currentImageIndex = index;
+    const mainImageContainer = document.getElementById('mainImageContainer');
+    mainImageContainer.style.backgroundImage = `url(${products[index].Image})`;
+}
+
+// Display related products (for simplicity, display other products)
+function displayRelatedProducts(currentProduct) {
+    const relatedProductsContainer = document.getElementById('relatedProductsContainer');
+    relatedProductsContainer.innerHTML = ''; // Clear existing
+
+    // Select related products - here, simply other products in the same category or random
+    relatedProducts = products.filter(prod => prod.Category !== currentProduct.Category).slice(0, 4); // Take first 4 different products
+
+    relatedProducts.forEach(prod => {
+        const productCard = document.createElement('div');
+        productCard.classList.add('product-card');
+
+        productCard.innerHTML = `
+            <div class="product-image">
+                <img src="${prod.Image}" alt="${prod.Category}" loading="lazy">
+            </div>
+            <div class="product-info">
+                <h3>${prod.Category}</h3>
+                <div class="product-rating">
+                    <span class="stars">${generateStars(prod['Growth (%)'])}</span>
+                    <span class="rating-number">4.5</span>
+                </div>
+                <div class="product-price">
+                    <span class="price">₽${prod['Top Product ACP (₽)']}</span>
+                    <span class="discount">10% скидка</span>
+                </div>
+            </div>
+            <button class="add-to-cart demo-btn" aria-label="Добавить в корзину">В корзину</button>
+        `;
+        relatedProductsContainer.appendChild(productCard);
     });
-});
+}
 
-// Parallax Effect on Main Image
-const mainImageContainer = document.getElementById('mainImageContainer');
-mainImageContainer.addEventListener('mousemove', (e) => {
-    const image = document.getElementById('currentImage');
-    const rect = mainImageContainer.getBoundingClientRect();
-    const x = e.clientX - rect.left; // x position within the element.
-    const y = e.clientY - rect.top;  // y position within the element.
-    // Adjusted multiplier for faster and more sensitive movement
-    const moveX = (x / rect.width - 0.5) * 300; // Increased multiplier
-    const moveY = (y / rect.height - 0.5) * 300; // Increased multiplier
-    // Corrected direction by inverting the movement
-    image.style.transform = `scale(1.05) translate(${-moveX}px, ${-moveY}px)`;
-});
+// Generate star ratings based on growth percentage
+function generateStars(growth) {
+    const starCount = growth ? Math.min(Math.round(growth / 10), 5) : 3;
+    return '★'.repeat(starCount) + '☆'.repeat(5 - starCount);
+}
 
-mainImageContainer.addEventListener('mouseleave', () => {
-    const image = document.getElementById('currentImage');
-    image.style.transform = 'scale(1.05) translate(0px, 0px)';
-});
+// Display ingredients
+function displayIngredients(product) {
+    const productIngredients = document.getElementById('productIngredients');
+    productIngredients.innerHTML = `
+        <p><strong>Ингредиенты:</strong> Восковой порошок, пигменты, минеральные...</p>
+        <p><strong>Срок производства:</strong> 2 года</p>
+        <p><strong>Срок годности:</strong> 20 шт.</p>
+    `;
+}
 
-// Toggle Favorite Button
+// Toggle Favorite Button (updated to handle dynamic content)
 function toggleFavorite(button) {
     button.classList.toggle('favorited');
     if (button.classList.contains('favorited')) {
@@ -68,60 +139,50 @@ function toggleFavorite(button) {
 function toggleDetails() {
     const overlay = document.getElementById('detailsOverlay');
     const detailsLink = document.querySelector('.details-link');
-    overlay.classList.toggle('open');
-    detailsLink.classList.toggle('active');
+    const isOpen = overlay.classList.contains('open');
+
+    if (isOpen) {
+        overlay.classList.remove('open');
+        overlay.setAttribute('aria-hidden', 'true');
+        detailsLink.classList.remove('active');
+    } else {
+        overlay.classList.add('open');
+        overlay.setAttribute('aria-hidden', 'false');
+        detailsLink.classList.add('active');
+    }
 }
 
 // Modal Functionality for Image Carousel
 const modal = document.getElementById('imageModal');
 const modalImg = document.getElementById('modalImg');
-const closeModalBtn = document.querySelector('.close');
-const nextBtn = document.querySelector('.next');
-const prevBtn = document.querySelector('.prev');
+const closeModalBtn = document.querySelector('.modal .close');
+const nextBtn = document.querySelector('.modal .next');
+const prevBtn = document.querySelector('.modal .prev');
 
 // Function to open modal with specific image index
 function openModal(index) {
     currentImageIndex = index;
     modal.style.display = "block";
-    modalImg.src = imageSources[currentImageIndex];
-    updateArrows();
+    modalImg.src = products[currentImageIndex].Image;
+    modal.setAttribute('aria-hidden', 'false');
 }
 
 // Function to close modal
 function closeModal() {
     modal.style.display = "none";
+    modal.setAttribute('aria-hidden', 'true');
 }
 
 // Function to show next image
 function showNextImage() {
-    currentImageIndex = (currentImageIndex + 1) % imageSources.length;
-    modalImg.src = imageSources[currentImageIndex];
-    updateArrows();
+    currentImageIndex = (currentImageIndex + 1) % products.length;
+    modalImg.src = products[currentImageIndex].Image;
 }
 
 // Function to show previous image
 function showPrevImage() {
-    currentImageIndex = (currentImageIndex - 1 + imageSources.length) % imageSources.length;
-    modalImg.src = imageSources[currentImageIndex];
-    updateArrows();
-}
-
-// Function to update arrows visibility (optional)
-function updateArrows() {
-    // Optional: If you want to hide arrows at the ends, uncomment below
-    /*
-    if (currentImageIndex === 0) {
-        prevBtn.style.display = "none";
-    } else {
-        prevBtn.style.display = "block";
-    }
-
-    if (currentImageIndex === imageSources.length - 1) {
-        nextBtn.style.display = "none";
-    } else {
-        nextBtn.style.display = "block";
-    }
-    */
+    currentImageIndex = (currentImageIndex - 1 + products.length) % products.length;
+    modalImg.src = products[currentImageIndex].Image;
 }
 
 // Event listeners for modal navigation
@@ -135,6 +196,23 @@ window.addEventListener('click', (e) => {
         closeModal();
     }
 });
+
+// Image Pan (Parallax) Effect Initialization
+function initializeParallax() {
+    const mainImageContainer = document.getElementById('mainImageContainer');
+    mainImageContainer.addEventListener('mousemove', (e) => {
+        const rect = mainImageContainer.getBoundingClientRect();
+        const xPercent = ((e.clientX - rect.left) / rect.width) * 100;
+        const yPercent = ((e.clientY - rect.top) / rect.height) * 100;
+
+        // Adjust background position based on cursor position
+        mainImageContainer.style.backgroundPosition = `${xPercent}% ${yPercent}%`;
+    });
+
+    mainImageContainer.addEventListener('mouseleave', () => {
+        mainImageContainer.style.backgroundPosition = 'center center';
+    });
+}
 
 // Reviews Data (Mock)
 let reviews = [
@@ -228,7 +306,8 @@ function loadReviews() {
                     const img = document.createElement('img');
                     img.src = mediaUrl;
                     img.alt = 'Отзыв пользователя';
-                    img.onclick = () => openModal(imageSources.indexOf(mediaUrl));
+                    img.loading = 'lazy';
+                    img.onclick = () => openModal(products.findIndex(p => p.Image === mediaUrl));
                     reviewMedia.appendChild(img);
                 }
             });
@@ -254,6 +333,7 @@ function loadReviews() {
 
 // Initial Load
 window.onload = function() {
+    fetchProducts();
     loadReviews();
 
     // Initialize detailed description as collapsed
@@ -264,31 +344,6 @@ window.onload = function() {
 // Load More Reviews
 function loadMoreReviews() {
     loadReviews();
-}
-
-// Sort Reviews
-function sortReviews(criteria) {
-    if (criteria === 'highest') {
-        reviews.sort((a, b) => b.rating - a.rating);
-    } else if (criteria === 'lowest') {
-        reviews.sort((a, b) => a.rating - b.rating);
-    } else if (criteria === 'newest') {
-        reviews.sort((a, b) => new Date(b.date) - new Date(a.date));
-    } else if (criteria === 'oldest') {
-        reviews.sort((a, b) => new Date(a.date) - new Date(b.date));
-    } else {
-        // Default sorting if needed
-        reviews.sort((a, b) => new Date(b.date) - new Date(a.date));
-    }
-
-    // Reset and Reload Reviews
-    const container = document.getElementById('reviewsContainer');
-    container.innerHTML = '';
-    reviewsLoaded = 0;
-    loadReviews();
-
-    // Show Load More button if hidden
-    document.querySelector('.load-more-btn').style.display = 'block';
 }
 
 // Submit Review (Mock)
@@ -359,3 +414,20 @@ demoButtons.forEach(button => {
         notifyDemo();
     });
 });
+
+// Image Pan (Parallax) Effect Initialization
+function initializeParallax() {
+    const mainImageContainer = document.getElementById('mainImageContainer');
+    mainImageContainer.addEventListener('mousemove', (e) => {
+        const rect = mainImageContainer.getBoundingClientRect();
+        const xPercent = ((e.clientX - rect.left) / rect.width) * 100;
+        const yPercent = ((e.clientY - rect.top) / rect.height) * 100;
+
+        // Adjust background position based on cursor position
+        mainImageContainer.style.backgroundPosition = `${xPercent}% ${yPercent}%`;
+    });
+
+    mainImageContainer.addEventListener('mouseleave', () => {
+        mainImageContainer.style.backgroundPosition = 'center center';
+    });
+}
