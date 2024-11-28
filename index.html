@@ -32,7 +32,7 @@
                 </div>
                 <div class="header-icons">
                     <a href="#" title="Профиль"><i class="fas fa-user"></i></a>
-                    <a href="#" title="Избранное"><i class="fas fa-heart"></i></a>
+                    <a href="#" title="Избранное" class="favorite-btn"><i class="fas fa-heart"></i></a>
                     <a href="#" title="Корзина"><i class="fas fa-shopping-cart"></i></a>
                 </div>
                 <div class="language-selector">
@@ -97,14 +97,14 @@
 
                 <!-- Add to Cart Button (Right) -->
                 <div class="add-to-cart-section">
-                    <button class="add-to-cart">Добавить в корзину</button>
+                    <button class="add-to-cart demo-btn">Добавить в корзину</button>
                 </div>
             </section>
 
             <!-- Detailed Description Overlay -->
             <div id="detailsOverlay" class="overlay">
                 <div class="overlay-content">
-                    <span class="close-btn" onclick="toggleDetails()">&times;</span>
+                    <span class="close-btn" onclick="toggleDetails()" aria-label="Закрыть">&times;</span>
                     <h2>Характеристики и описание</h2>
                     <ul>
                         <li>Ингредиенты: Высококачественный воск, пигменты</li>
@@ -131,7 +131,7 @@
                         <span class="rating-text">из 5</span>
                         <span class="rating-count">(128 отзывов)</span>
                     </div>
-                    <button class="load-more-btn" onclick="loadMoreReviews()">Загрузить больше отзывов</button>
+                    <button class="load-more-btn demo-btn" onclick="notifyDemo()">Загрузить больше отзывов</button>
                 </div>
                 <div id="reviewsContainer">
                     <!-- Reviews will be dynamically loaded here -->
@@ -158,7 +158,7 @@
                         <label for="reviewMedia">Загрузить фото/видео:</label>
                         <input type="file" id="reviewMedia" name="reviewMedia" accept="image/*,video/*" multiple>
 
-                        <button type="submit">Отправить отзыв</button>
+                        <button type="submit" class="demo-btn">Отправить отзыв</button>
                     </form>
                 </div>
             </section>
@@ -183,7 +183,7 @@
                                 <span class="discount">10% скидка</span>
                             </div>
                         </div>
-                        <button class="add-to-cart">В корзину</button>
+                        <button class="add-to-cart demo-btn">В корзину</button>
                     </div>
                     <div class="product-card">
                         <div class="product-image">
@@ -200,7 +200,7 @@
                                 <span class="discount">5% скидка</span>
                             </div>
                         </div>
-                        <button class="add-to-cart">В корзину</button>
+                        <button class="add-to-cart demo-btn">В корзину</button>
                     </div>
                     <!-- Add more product cards as needed -->
                 </div>
@@ -222,10 +222,10 @@
     <footer>
         <div class="footer-container">
             <div class="footer-links">
-                <a href="#">Условия использования</a>
-                <a href="#">Политика конфиденциальности</a>
-                <a href="#">Служба поддержки</a>
-                <a href="#">FAQ</a>
+                <a href="#" class="demo-btn">Условия использования</a>
+                <a href="#" class="demo-btn">Политика конфиденциальности</a>
+                <a href="#" class="demo-btn">Служба поддержки</a>
+                <a href="#" class="demo-btn">FAQ</a>
             </div>
             <div class="social-media">
                 <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
@@ -239,11 +239,11 @@
 
     <!-- Image Modal -->
     <div id="imageModal" class="modal">
-        <span class="close" onclick="closeModal()">&times;</span>
+        <span class="close" onclick="closeModal()" aria-label="Закрыть">&times;</span>
         <div class="modal-content">
-            <span class="prev" onclick="showPrevImage()">&#10094;</span>
+            <span class="prev" onclick="showPrevImage()" aria-label="Предыдущее">&#10094;</span>
             <img id="modalImg" src="" alt="Увеличенное изображение продукта">
-            <span class="next" onclick="showNextImage()">&#10095;</span>
+            <span class="next" onclick="showNextImage()" aria-label="Следующее">&#10095;</span>
         </div>
     </div>
 

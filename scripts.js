@@ -40,9 +40,11 @@ mainImageContainer.addEventListener('mousemove', (e) => {
     const rect = mainImageContainer.getBoundingClientRect();
     const x = e.clientX - rect.left; // x position within the element.
     const y = e.clientY - rect.top;  // y position within the element.
-    const moveX = (x / rect.width - 0.5) * 30; // Increased multiplier for more pronounced effect
-    const moveY = (y / rect.height - 0.5) * 30; // Increased multiplier for more pronounced effect
-    image.style.transform = `scale(1.05) translate(${moveX}px, ${moveY}px)`;
+    // Adjusted multiplier for faster and more sensitive movement
+    const moveX = (x / rect.width - 0.5) * 300; // Increased multiplier
+    const moveY = (y / rect.height - 0.5) * 300; // Increased multiplier
+    // Corrected direction by inverting the movement
+    image.style.transform = `scale(1.05) translate(${-moveX}px, ${-moveY}px)`;
 });
 
 mainImageContainer.addEventListener('mouseleave', () => {
@@ -104,7 +106,7 @@ function showPrevImage() {
     updateArrows();
 }
 
-// Function to update arrows visibility
+// Function to update arrows visibility (optional)
 function updateArrows() {
     // Optional: If you want to hide arrows at the ends, uncomment below
     /*
@@ -342,4 +344,18 @@ reviewForm.addEventListener('submit', function(e) {
 const languageSelector = document.querySelector('.language-selector select');
 languageSelector.addEventListener('change', function() {
     alert('Функция смены языка еще не реализована.');
+});
+
+// Demo Notification for Non-Functional Buttons
+function notifyDemo() {
+    alert('Эта функция пока доступна только для демонстрационных целей.');
+}
+
+// Add event listeners to all buttons and links with class 'demo-btn'
+const demoButtons = document.querySelectorAll('.demo-btn');
+demoButtons.forEach(button => {
+    button.addEventListener('click', (e) => {
+        e.preventDefault(); // Prevent default action
+        notifyDemo();
+    });
 });
