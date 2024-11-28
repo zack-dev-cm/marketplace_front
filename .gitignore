@@ -2,3 +2,4 @@ images/
 .*
 prodacts.db
 */.*
+backend/.*
