@@ -4,10 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MyStore - Категории товаров</title>
+    <title>MyStore - Каталог товаров</title>
     <link rel="stylesheet" href="styles.css">
     <!-- Font Awesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTTXJNn6+4ZT0nS4wFIUBPqWbQF/oJQrCrvP7RmNzKxO6NLe9d9pKm7wRdyTfYxA/EzJr7Jifw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 </head>
 <body>
     <!-- Header Section -->
@@ -19,24 +19,25 @@
             <nav class="navigation">
                 <ul>
                     <li><a href="index.html">Главная</a></li>
-                    <li><a href="#">Категории</a></li>
+                    <li><a href="marketplace.html">Каталог</a></li>
+                    <li><a href="#">О нас</a></li>
+                    <li><a href="#">Контакты</a></li>
                 </ul>
             </nav>
             <div class="header-right">
                 <div class="search-bar">
-                    <input type="text" placeholder="Поиск товаров..." aria-label="Поиск товаров">
-                    <button aria-label="Поиск"><i class="fas fa-search"></i></button>
+                    <input type="text" placeholder="Поиск..." aria-label="Поиск товаров">
+                    <button aria-label="Найти"><i class="fas fa-search"></i></button>
                 </div>
                 <div class="header-icons">
-                    <a href="#" title="Профиль" aria-label="Профиль"><i class="fas fa-user"></i></a>
-                    <a href="#" title="Избранное" class="favorite-btn" onclick="toggleFavorite(this)" aria-label="Избранное"><i class="fas fa-heart"></i></a>
-                    <a href="#" title="Корзина" class="cart-btn" aria-label="Корзина"><i class="fas fa-shopping-cart"></i></a>
+                    <a href="#" aria-label="Избранное"><i class="fas fa-heart"></i></a>
+                    <a href="#" aria-label="Корзина"><i class="fas fa-shopping-cart"></i></a>
                 </div>
                 <div class="language-selector">
                     <select aria-label="Выбор языка">
-                        <option value="ru">РУС</option>
-                        <option value="en">ENG</option>
-                        <!-- Add more languages as needed -->
+                        <option value="ru">RU</option>
+                        <option value="en">EN</option>
+                        <option value="de">DE</option>
                     </select>
                 </div>
             </div>
@@ -47,8 +48,8 @@
     <section class="promo-banner">
         <div class="container">
             <h2>Скидки до 50%</h2>
-            <p>Успейте купить!</p>
-            <a href="#" class="promo-link cart-btn" aria-label="Перейти к акции">Перейти к акции</a>
+            <p>Успей купить!</p>
+            <a href="marketplace.html" class="promo-link cart-btn" aria-label="Перейти к акции">Перейти к акции</a>
         </div>
     </section>
 
@@ -97,7 +98,7 @@
                 <h2>Отзывы покупателей</h2>
                 <div class="reviews-header">
                     <div class="overall-rating">
-                        <span class="stars" aria-label="Рейтинг товара">★★★★★</span>
+                        <span class="stars" aria-label="Рейтинг товара">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
                         <span class="avg-rating">4.8</span>
                         <span class="rating-text">из 5</span>
                         <span class="rating-count">(128 отзывов)</span>
@@ -116,11 +117,11 @@
                         <label for="reviewRating">Рейтинг:</label>
                         <select id="reviewRating" name="reviewRating" required aria-required="true">
                             <option value="">Выберите рейтинг</option>
-                            <option value="5">★★★★★</option>
-                            <option value="4">★★★★☆</option>
-                            <option value="3">★★★☆☆</option>
-                            <option value="2">★★☆☆☆</option>
-                            <option value="1">★☆☆☆☆</option>
+                            <option value="5">&#9733;&#9733;&#9733;&#9733;&#9733;</option>
+                            <option value="4">&#9733;&#9733;&#9733;&#9733;&#9734;</option>
+                            <option value="3">&#9733;&#9733;&#9733;&#9734;&#9734;</option>
+                            <option value="2">&#9733;&#9733;&#9734;&#9734;&#9734;</option>
+                            <option value="1">&#9733;&#9734;&#9734;&#9734;&#9734;</option>
                         </select>
 
                         <label for="reviewContent">Отзыв:</label>
@@ -156,7 +157,7 @@
     <footer>
         <div class="footer-container">
             <div class="footer-links">
-                <a href="#" class="footer-link" aria-label="Услуги и поддержка">Услуги и поддержка</a>
+                <a href="#" class="footer-link" aria-label="Условия и положения">Условия и положения</a>
                 <a href="#" class="footer-link" aria-label="Политика конфиденциальности">Политика конфиденциальности</a>
                 <a href="#" class="footer-link" aria-label="Служба поддержки">Служба поддержки</a>
                 <a href="#" class="footer-link" aria-label="FAQ">FAQ</a>
@@ -170,17 +171,6 @@
             <p>&copy; 2024 MyStore. Все права защищены.</p>
         </div>
     </footer>
-
-    <!-- Image Modal -->
-    <div id="imageModal" class="modal" aria-hidden="true">
-        <span class="close" onclick="closeModal()" aria-label="Закрыть">&times;</span>
-        <div class="modal-content">
-            <span class="prev" onclick="showPrevImage()" aria-label="Предыдущая">&#10094;</span>
-            <img id="modalImg" src="" alt="Увеличенное изображение товара" loading="lazy">
-            <span class="next" onclick="showNextImage()" aria-label="Следующая">&#10095;</span>
-        </div>
-   
-
 
     <!-- Image Modal -->
     <div id="imageModal" class="modal" aria-hidden="true">

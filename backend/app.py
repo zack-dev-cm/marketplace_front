@@ -4,7 +4,7 @@ from flask import Flask, jsonify, send_from_directory
 from flask_cors import CORS
 import sqlite3
 import os
-import json  # Added import for json module
+import json
 from apscheduler.schedulers.background import BackgroundScheduler
 
 app = Flask(__name__, static_folder='../', static_url_path='/')
@@ -30,14 +30,20 @@ def get_products():
             product['Image'] = f"/images/{product['Image']}"
             product['is_leader'] = bool(product['is_leader'])
             # Deserialize JSON fields
-            if 'Specs' in product:
+            if 'Specs' in product and product['Specs']:
                 product['Specs'] = json.loads(product['Specs'])
-            if 'Feedbacks' in product:
+            else:
+                product['Specs'] = {}
+            if 'Feedbacks' in product and product['Feedbacks']:
                 product['Feedbacks'] = json.loads(product['Feedbacks'])
-            if 'Images' in product:
+            else:
+                product['Feedbacks'] = []
+            if 'Images' in product and product['Images']:
                 product['Images'] = json.loads(product['Images'])
                 # Modify image paths in Images
                 product['Images'] = [f"/images/{img}" for img in product['Images']]
+            else:
+                product['Images'] = [product['Image']]  # Fallback to main image
         return jsonify(product_list)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -66,14 +72,20 @@ def get_best_products():
             product['Image'] = f"/images/{product['Image']}"
             product['is_leader'] = bool(product['is_leader'])
             # Deserialize JSON fields
-            if 'Specs' in product:
+            if 'Specs' in product and product['Specs']:
                 product['Specs'] = json.loads(product['Specs'])
-            if 'Feedbacks' in product:
+            else:
+                product['Specs'] = {}
+            if 'Feedbacks' in product and product['Feedbacks']:
                 product['Feedbacks'] = json.loads(product['Feedbacks'])
-            if 'Images' in product:
+            else:
+                product['Feedbacks'] = []
+            if 'Images' in product and product['Images']:
                 product['Images'] = json.loads(product['Images'])
                 # Modify image paths in Images
                 product['Images'] = [f"/images/{img}" for img in product['Images']]
+            else:
+                product['Images'] = [product['Image']]  # Fallback to main image
         return jsonify(best_product_list)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
