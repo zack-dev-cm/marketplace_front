@@ -7,7 +7,7 @@
     <title>MyStore - Главная</title>
     <link rel="stylesheet" href="styles.css">
     <!-- Font Awesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTTXJNn6+4ZT0nS4wFIUBPqWbQF/oJQrCrvP7RmNzKxO6NLe9d9pKm7wRdyTfYxA/EzJr7Jifw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <!-- Chart.js for Dynamic Plots -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -21,18 +21,46 @@
             <nav class="navigation">
                 <ul>
                     <li><a href="index.html">Главная</a></li>
-                    <li><a href="marketplace.html">Категории</a></li>
+                    <li><a href="marketplace.html">Каталог</a></li>
+                    <li><a href="#">О нас</a></li>
+                    <li><a href="#">Контакты</a></li>
                 </ul>
             </nav>
+            <div class="header-right">
+                <div class="search-bar">
+                    <input type="text" placeholder="Поиск..." aria-label="Поиск товаров">
+                    <button aria-label="Найти"><i class="fas fa-search"></i></button>
+                </div>
+                <div class="header-icons">
+                    <a href="#" aria-label="Избранное"><i class="fas fa-heart"></i></a>
+                    <a href="#" aria-label="Корзина"><i class="fas fa-shopping-cart"></i></a>
+                </div>
+                <div class="language-selector">
+                    <select aria-label="Выбор языка">
+                        <option value="ru">RU</option>
+                        <option value="en">EN</option>
+                        <option value="de">DE</option>
+                    </select>
+                </div>
+            </div>
         </div>
     </header>
+
+    <!-- Promotional Banner -->
+    <section class="promo-banner">
+        <div class="container">
+            <h2>Скидки до 50%</h2>
+            <p>Успей купить!</p>
+            <a href="marketplace.html" class="promo-link cart-btn" aria-label="Перейти к акции">Перейти к акции</a>
+        </div>
+    </section>
 
     <!-- Main Content -->
     <main>
         <div class="container">
-            <!-- Realtime Dynamic Plots Section -->
-            <section class="realtime-plots">
-                <h2>Тенденции продаж популярных товаров</h2>
+            <!-- Placeholder for Home Page Content -->
+            <section class="home-content">
+                <h2>Добро пожаловать в MyStore</h2>
                 <canvas id="predictionsChart"></canvas>
             </section>
         </div>
@@ -42,7 +70,7 @@
     <footer>
         <div class="footer-container">
             <div class="footer-links">
-                <a href="#" class="footer-link" aria-label="Услуги и поддержка">Услуги и поддержка</a>
+                <a href="#" class="footer-link" aria-label="Условия и положения">Условия и положения</a>
                 <a href="#" class="footer-link" aria-label="Политика конфиденциальности">Политика конфиденциальности</a>
                 <a href="#" class="footer-link" aria-label="Служба поддержки">Служба поддержки</a>
                 <a href="#" class="footer-link" aria-label="FAQ">FAQ</a>

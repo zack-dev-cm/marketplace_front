@@ -7,7 +7,7 @@
     <title>MyStore - Каталог товаров</title>
     <link rel="stylesheet" href="styles.css">
     <!-- Font Awesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTTXJNn6+4ZT0nS4wFIUBPqWbQF/oJQrCrvP7RmNzKxO6NLe9d9pKm7wRdyTfYxA/EzJr7Jifw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 </head>
 <body>
     <!-- Header Section -->
@@ -19,24 +19,25 @@
             <nav class="navigation">
                 <ul>
                     <li><a href="index.html">Главная</a></li>
+                    <li><a href="marketplace.html">Каталог</a></li>
+                    <li><a href="#">О нас</a></li>
                     <li><a href="#">Контакты</a></li>
                 </ul>
             </nav>
             <div class="header-right">
                 <div class="search-bar">
-                    <input type="text" placeholder="Поиск товаров..." aria-label="Поиск товаров">
-                    <button aria-label="Поиск"><i class="fas fa-search"></i></button>
+                    <input type="text" placeholder="Поиск..." aria-label="Поиск товаров">
+                    <button aria-label="Найти"><i class="fas fa-search"></i></button>
                 </div>
                 <div class="header-icons">
-                    <a href="#" title="Профиль" aria-label="Профиль"><i class="fas fa-user"></i></a>
-                    <a href="#" title="Избранное" class="favorite-btn" onclick="toggleFavorite(this)" aria-label="Избранное"><i class="fas fa-heart"></i></a>
-                    <a href="#" title="Корзина" class="cart-btn" aria-label="Корзина"><i class="fas fa-shopping-cart"></i></a>
+                    <a href="#" aria-label="Избранное"><i class="fas fa-heart"></i></a>
+                    <a href="#" aria-label="Корзина"><i class="fas fa-shopping-cart"></i></a>
                 </div>
                 <div class="language-selector">
                     <select aria-label="Выбор языка">
-                        <option value="ru">РУС</option>
-                        <option value="en">ENG</option>
-                        <!-- Add more languages as needed -->
+                        <option value="ru">RU</option>
+                        <option value="en">EN</option>
+                        <option value="de">DE</option>
                     </select>
                 </div>
             </div>
@@ -47,8 +48,8 @@
     <section class="promo-banner">
         <div class="container">
             <h2>Скидки до 50%</h2>
-            <p>Успейте купить!</p>
-            <a href="#" class="promo-link cart-btn" aria-label="Перейти к акциям">Перейти к акциям</a>
+            <p>Успей купить!</p>
+            <a href="marketplace.html" class="promo-link cart-btn" aria-label="Перейти к акции">Перейти к акции</a>
         </div>
     </section>
 
@@ -69,17 +70,7 @@
 
                 <!-- Short Information (Middle) -->
                 <div class="product-short-info" id="productInfo">
-                    <h1 class="product-name">Candy Bags for School</h1>
-                    <div class="short-info">
-                        <p><strong>Цена:</strong> ₽327</p>
-                        <p><strong>Наличие:</strong> 56%</p>
-                        <p><strong>Вес:</strong> 500г</p>
-                        <p><strong>Фвет:</strong> Разноцветные</p>
-                        <p><strong>Размер:</strong> 30x40 см</p>
-                    </div>
-                    <a href="javascript:void(0);" class="details-link" onclick="toggleDetails()" aria-label="Показать подробности">
-                        Показать подробности <i class="fas fa-chevron-down"></i>
-                    </a>
+                    <!-- Product information will be dynamically inserted here -->
                 </div>
 
                 <!-- Add to Cart Button (Right) -->
@@ -94,16 +85,10 @@
                     <span class="close-btn" onclick="toggleDetails()" aria-label="Закрыть">&times;</span>
                     <h2>Характеристики и описание</h2>
                     <ul id="productSpecifications">
-                        <li><strong>Материал:</strong> Полиэстер</li>
-                        <li><strong>Страна производства:</strong> Китай</li>
-                        <li><strong>Размер:</strong> 30x40 см</li>
-                        <!-- Add more specifications as needed -->
+                        <!-- Specifications will be dynamically inserted here -->
                     </ul>
                     <ol id="productDetails">
-                        <li>Прочная и долговечная ткань.</li>
-                        <li>Ирклиевые и привлекательные дизайны.</li>
-                        <li>Подходит для ежедневного использования.</li>
-                        <!-- Add more detailed descriptions as needed -->
+                        <!-- Detailed descriptions will be dynamically inserted here -->
                     </ol>
                 </div>
             </div>
@@ -113,7 +98,7 @@
                 <h2>Отзывы покупателей</h2>
                 <div class="reviews-header">
                     <div class="overall-rating">
-                        <span class="stars" aria-label="Отличный рейтинг">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+                        <span class="stars" aria-label="Рейтинг товара">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
                         <span class="avg-rating">4.8</span>
                         <span class="rating-text">из 5</span>
                         <span class="rating-count">(128 отзывов)</span>
@@ -162,9 +147,7 @@
             <section class="product-ingredients">
                 <h2>Ингредиенты и состав</h2>
                 <div class="ingredients-content" id="productIngredients">
-                    <p>Начи candy bags изготовлены из высококачественного полиэстера, обеспечивающего долговечность и устойчивость к износу. Разноцветные оттенки придают яркость и привлекательность, делая их идеальным выбором для школьников.</p>
-                    <p>Размеры 30x40 см позволяют вместить все необходимые принадлежности, а легкий вес делает их удобными для ежедневного использования.</p>
-                    <!-- Add more content as needed -->
+                    <!-- Ingredients and composition will be dynamically inserted here -->
                 </div>
             </section>
         </div>
@@ -174,7 +157,7 @@
     <footer>
         <div class="footer-container">
             <div class="footer-links">
-                <a href="#" class="footer-link" aria-label="Услуги и поддержка">Услуги и поддержка</a>
+                <a href="#" class="footer-link" aria-label="Условия и положения">Условия и положения</a>
                 <a href="#" class="footer-link" aria-label="Политика конфиденциальности">Политика конфиденциальности</a>
                 <a href="#" class="footer-link" aria-label="Служба поддержки">Служба поддержки</a>
                 <a href="#" class="footer-link" aria-label="FAQ">FAQ</a>
